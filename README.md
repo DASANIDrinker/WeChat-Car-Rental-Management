@@ -24,7 +24,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 租车应用后台管理系统
 
 ## 分支管理
-master：主分支，线上项目打包使用
+master/main：主分支，线上项目打包使用
 develop：开发分支， 本地开发使用， 每一次发布新的版本前，需要将develop分支代码合并到master上
 develop-> merge -> master:
   1. 保存develop代码，并提交到github
