@@ -1,22 +1,13 @@
-# management
+## Project Intro:
+A Car Rental Application's management system for staff. 
 
-> A Vue.js project
+## Project Description:
+The management system is implemented by Vue.js along with ElementUI which is a open-source UI library.
 
-## Build Setup
+The basic functionality of this system consists of creation, update and deletion of different Java objects.
+For example, the staff can create a new type of vehicle by entering the brand and model as well as displacement etc.
+The staff can also edit a vehicle type based on its boxes, seats and style etc. 
+The vehicle type can be deleted if such model is obsolete.
 
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
-
+On top of the basic function, management system also allows creation, deletion and update on driver's
+ID and license. The images will be created, deleted and updated correspondingly on the server.
