@@ -84,7 +84,7 @@
                 :default-sort="{ prop: 'id', order: 'ascending' }" @selection-change="handleSelectionChange">
                 <el-table-column type="expand">
                 </el-table-column>
-                <el-table-column type="selection" width="55" fixed="left" prop="vehicleTypeId">
+                <el-table-column type="selection" width="55" fixed="left" prop="id">
                 </el-table-column>
                 <el-table-column prop="id" label="身份证号" width="180" fixed="left" sortable>
                 </el-table-column>
@@ -98,6 +98,93 @@
                 <el-table-column prop="gender" label="性别" width="150"></el-table-column>
                 <el-table-column prop="nationality" label="国籍" width="150"></el-table-column>
                 <el-table-column prop="accessToken" label="用户登录凭证" width="150"></el-table-column>
+
+                <el-table-column label="上传身份证正面图片" width="150">
+                    <template slot-scope="scope">
+
+                        <!-- <el-upload action="http://192.168.64.130:8081/image/uploadIds/" :on-preview="handlePreview" -->
+                        <el-upload action="http://localhost:8081/image/uploadIds/" :on-preview="handlePreview"
+                        :on-remove="handleRemove" list-type="picture" :limit="1" :data="currentDriver"
+                            :on-success="getDrivers">
+                            <el-image style="width: 100px; height: 100px" :src="scope.row.fullIdFrontUrl"
+                                lazy></el-image>
+                            <el-button size="small" type="primary"
+                                @click="clickUploadIdFrontButton(scope.row)">点击上传</el-button>
+                            <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+                        </el-upload>
+
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="下载/删除身份证正面图片" width="150">
+                    <template slot-scope="scope">
+                        <!-- <el-image style="width: 100px; height: 100px" :src="scope.row.imageUrl" lazy></el-image> -->
+                        <el-button size="small" type="primary" class="downloadButton"
+                            @click="clickDownloadIdFrontButton(scope.row)">点击下载</el-button>
+                        <el-button size="small" type="danger" class="deleteButton"
+                            @click="clickDeleteIdFrontButton(scope.row)">点击删除</el-button>
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="上传身份证反面图片" width="150">
+                    <template slot-scope="scope">
+
+
+                        <!-- <el-upload action="http://192.168.64.130:8081/image/uploadIds/" :on-preview="handlePreview"     -->
+                                                <el-upload action="http://localhost:8081/image/uploadIds/" :on-preview="handlePreview"
+                            :on-remove="handleRemove" list-type="picture" :limit="1" :data="currentDriver"
+                            :on-success="getDrivers">
+                            <el-image style="width: 100px; height: 100px" :src="scope.row.fullIdBackUrl"
+                                lazy></el-image>
+                            <el-button size="small" type="primary"
+                                @click="clickUploadIdBackButton(scope.row)">点击上传</el-button>
+                            <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+                        </el-upload>
+
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="下载/删除身份证反面图片" width="150">
+                    <template slot-scope="scope">
+                        <!-- <el-image style="width: 100px; height: 100px" :src="scope.row.imageUrl" lazy></el-image> -->
+                        <el-button size="small" type="primary" class="downloadButton"
+                            @click="clickDownloadIdBackButton(scope.row)">点击下载</el-button>
+                        <el-button size="small" type="danger" class="deleteButton"
+                            @click="clickDeleteIdBackButton(scope.row)">点击删除</el-button>
+                    </template>
+                </el-table-column>
+
+
+                <el-table-column label="上传驾驶证图片" width="150">
+                    <template slot-scope="scope">
+
+
+                        <!-- <el-upload action="http://192.168.64.130:8081/image/uploadIds/" :on-preview="handlePreview"     -->
+                            <el-upload action="http://localhost:8081/image/uploadIds/" :on-preview="handlePreview"
+                            :on-remove="handleRemove" list-type="picture" :limit="1" :data="currentDriver"
+                            :on-success="getDrivers">
+                            <el-image style="width: 100px; height: 100px" :src="scope.row.fullLicenseUrl"
+                                lazy></el-image>
+                            <el-button size="small" type="primary"
+                                @click="clickUploadLicenseButton(scope.row)">点击上传</el-button>
+                            <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+                        </el-upload>
+
+                    </template>
+                </el-table-column>
+
+                <el-table-column label="下载/删除驾驶证图片" width="150">
+                    <template slot-scope="scope">
+                        <!-- <el-image style="width: 100px; height: 100px" :src="scope.row.imageUrl" lazy></el-image> -->
+                        <el-button size="small" type="primary" class="downloadButton"
+                            @click="clickDownloadLicenseButton(scope.row)">点击下载</el-button>
+                        <el-button size="small" type="danger" class="deleteButton"
+                            @click="clickDeleteLicenseutton(scope.row)">点击删除</el-button>
+                    </template>
+                </el-table-column>
+
+
+
                 <el-table-column width="150" fixed="right" label="操作">
                     <template slot-scope="scope">
                         <el-button type="primary" icon="el-icon-edit" circle style="margin-left: 20px"
@@ -225,10 +312,20 @@ export default {
     methods: {
         async getDrivers() {
             try {
-                await this.axios.get('http://localhost:8081/driver/getAll')
+                // await this.axios.get('http://localhost:8081/driver/getAll')
+                await this.axios.get('/api/driver/getAll')
                     .then(res => {
                         console.log(res);
                         this.drivers = res.data;
+                        for (var i = 0; i < this.drivers.length; i++) {
+                            this.drivers[i].fullIdFrontUrl = "http://localhost:8081/img/ID/" + this.drivers[i].idFrontUrl + "/"
+                            this.drivers[i].fullIdBackUrl = "http://localhost:8081/img/ID/" + this.drivers[i].idBackUrl + "/"
+                            this.drivers[i].fullLicenseUrl = "http://localhost:8081/img/ID/" + this.drivers[i].licenseUrl + "/"
+
+                            // this.drivers[i].fullIdFrontUrl = "http://192.168.64.130:8081/img/ID/" + this.drivers[i].idFrontUrl + "/"
+                            // this.drivers[i].fullIdBackUrl = "http://192.168.64.130:8081/img/ID/" + this.drivers[i].idBackUrl + "/"
+                            // this.drivers[i].fullLicenseUrl = "http://192.168.64.130:8081/img/ID/" + this.drivers[i].licenseUrl + "/"
+                        }
                     }).catch(err => {
                         console.log(err)
                     })
@@ -284,7 +381,8 @@ export default {
 
         async confirmCreateForm() {
             this.createFormLoading = true
-            await this.axios.post('http://localhost:8081/driver/uploadDriver',
+            // await this.axios.post('http://localhost:8081/driver/uploadDriver',
+            await this.axios.post('/api/driver/uploadDriver',
                 this.createForm
             ).then(res => {
                 this.createFormLoading = false
@@ -353,7 +451,8 @@ export default {
 
         async confirmEditForm() {
             this.editFormLoading = true
-            await this.axios.put('http://localhost:8081/driver/update',
+            // await this.axios.put('http://localhost:8081/driver/update',
+            await this.axios.put('/api/driver/update',
                 this.editForm).then(res => {
                     console.log(res)
                     this.editFormLoading = false
@@ -433,7 +532,8 @@ export default {
                     if (action === 'confirm') {
                         instance.confirmButtonLoading = true
                         if (this.multipleSelection.length == 0) {
-                            this.axios.delete('http://localhost:8081/driver/delete',
+                            // this.axios.delete('http://localhost:8081/driver/delete',
+                            this.axios.delete('/api/driver/delete',
                                 { data: id }).then(res => {
                                     console.log(res)
                                     if (res.data == "success") {
@@ -463,7 +563,8 @@ export default {
                                 ids.push(this.multipleSelection[i].id)
                             }
                             console.log(ids)
-                            this.axios.delete('http://localhost:8081/driver/delete',
+                            // this.axios.delete('http://localhost:8081/driver/delete',
+                            this.axios.delete('/api/driver/delete',
                                 { data: ids }).then(res => {
                                     console.log(res)
                                     if (res.data == "success") {
@@ -485,17 +586,263 @@ export default {
                                 })
                         }
                     }
-                    if(action === 'cancel'){
+                    if (action === 'cancel') {
                         done()
                     }
                 }
             })
         },
+        //上传按钮 函数
+        handleRemove(file, fileList) {
+            console.log(file, fileList);
+        },
 
+        handlePreview(file) {
+            console.log(file);
+        },
+        handleExceed(files, fileList) {
+            this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+        },
+        beforeRemove(file, fileList) {
+            return this.$confirm(`确定移除 ${file.name}？`);
+        },
 
+        //点击上传身份证正面按钮
+        clickUploadIdFrontButton(e) {
+            this.currentDriver = e
+            this.currentDriver.label = 1
+            console.log(this.currentDriver)
+        },
 
+        //点击下载身份证正面照片按钮
+        clickDownloadIdFrontButton(e) {
+            this.currentDriver = e
+            var url = e.fullIdFrontUrl
+            var id = this.currentDriver.id + " " + this.currentDriver.name + " 正面"
+            console.log(url)
+            console.log(id)
+            this.downloadByBlob(url, id)
+        },
+
+        //下载图片的函数 name为图片下载后的名字 url为请求的路径
+        downloadByBlob(url, name) {
+            let image = new Image()
+            image.setAttribute('crossOrigin', '*')
+            // image.crossOrigin = "*";
+            image.src = url
+            image.onload = () => {
+                let canvas = document.createElement('canvas')
+                canvas.width = image.width
+                canvas.height = image.height
+                let ctx = canvas.getContext('2d')
+                ctx.drawImage(image, 0, 0, image.width, image.height)
+                canvas.toBlob((blob) => {
+                    let url = URL.createObjectURL(blob)
+                    this.download(url, name)
+                    // 用完释放URL对象
+                    URL.revokeObjectURL(url)
+                })
+
+            }
+
+        },
+
+        download(href, name) {
+            let eleLink = document.createElement('a')
+            eleLink.download = name
+            eleLink.href = href
+            eleLink.click()
+            eleLink.remove()
+
+        },
+
+        //点击删除身份证正面图片的按钮函数
+        clickDeleteIdFrontButton(e) {
+            this.currentDriver = e
+            this.deleteIdFrontImage(this.currentDriver.id, this.currentDriver.idFrontUrl)
+        },
+
+        //删除身份证正面照片函数 id为身份证号 idFrontUrl为身份证的图片名字 eg:xxx.jpg
+        async deleteIdFrontImage(id, idFrontUrl) {
+            await this.$confirm('是否要删除该图片?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.axios.get('/api/image/deleteIdFrontImage',
+                    { params: { id: id, idFrontUrl: idFrontUrl } })
+                    .then(res => {
+                        if (res.status == 200) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功'
+                            })
+                            // this.getProductImage()
+                        }
+                    }).catch(res => {
+
+                    })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                })
+            })
+
+        },
+
+        //点击上传身份证反面按钮函数
+        clickUploadIdBackButton(e) {
+            this.currentDriver = e
+            this.currentDriver.label = 2
+            console.log(this.currentDriver)
+        },
+
+        //点击下载身份证背面按钮
+        clickDownloadIdBackButton(e) {
+            this.currentDriver = e
+            var url = e.fullIdBackUrl
+            var id = this.currentDriver.id + " " + this.currentDriver.name + " 背面"
+            console.log(url)
+            console.log(id)
+            this.downloadByBlob(url, id)
+        },
+
+        //点击删除身份证背面按钮函数
+        clickDeleteIdBackButton(e) {
+            this.currentDriver = e
+            this.deleteIdBackImage(this.currentDriver.id, this.currentDriver.idBackUrl)
+        },
+
+        //删除身份证反面照片函数 id为身份证号 idBackUrl为身份证的图片名字 eg:xxx.jpg
+        async deleteIdBackImage(id, idBackUrl) {
+            var updateFlag = false
+            await this.$confirm('是否要删除该图片?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.axios.get('/api/image/deleteIdBackImage',
+                    { params: { id: id, idBackUrl: idBackUrl } })
+                    .then(res => {
+                        if (res.status == 200) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功'
+                            })
+                            updateFlag = true
+                        }
+                    }).catch(res => {
+
+                    })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                })
+            })
+            
+            this.updateDrivers(updateFlag)
+        },
+
+        //点击上传驾驶证图片按钮函数
+        clickUploadLicenseButton(e) {
+            this.currentDriver = e
+            this.currentDriver.label = 3
+            console.log(this.currentDriver)
+        },
+
+        //点击下载驾驶证图片按钮
+        clickDownloadLicenseButton(e) {
+            this.currentDriver = e
+            var url = e.fullLicenseUrl
+            var id = this.currentDriver.id + " " + this.currentDriver.name + " 驾驶证"
+            console.log(url)
+            console.log(id)
+            this.downloadByBlob(url, id)
+        },
+
+        //点击删除驾驶证图片按钮函数
+        clickDeleteLicenseutton(e) {
+            this.currentDriver = e
+            this.deleteLicenseImage(this.currentDriver.id, this.currentDriver.licenseUrl)
+        },
+
+        //删除驾驶证照片函数 id为身份证号 licenseUrl为驾驶证的图片名字 eg:xxx.jpg
+        async deleteLicenseImage(id, licenseUrl) {
+            await this.$confirm('是否要删除该图片?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.axios.get('/api/image/deleteLicenseImage',
+                    { params: { id: id, licenseUrl: licenseUrl } })
+                    .then(res => {
+                        if (res.status == 200) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功'
+                            })
+                        }
+                    }).catch(res => {
+
+                    })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                })
+            })
+        },
+
+        //备用参数 用来在上传或删除图片之后更新数据 不知道为什么没用
+        getDriverbyId(e) {
+            var id = e.id
+            console.log(111)
+            this.axios.get('/api/driver/getDriverById',
+                { params: { id: id } }).then(res => {
+                    if (res.status == 200) {
+                        var updatedDriver = res.data
+                        updatedDriver.fullIdFrontUrl = "http://localhost:8081/img/ID/" + updatedDriver.idFrontUrl + "/"
+                        updatedDriver.fullIdBackUrl = "http://localhost:8081/img/ID/" + updatedDriver.idBackUrl + "/"
+                        updatedDriver.fullLicenseUrl = "http://localhost:8081/img/ID/" + updatedDriver.licenseUrl + "/"
+                        console.log(updatedDriver)
+                        for (var i = 0; i < this.drivers.length; i++) {
+                            if (this.drivers[i].id == updatedDriver.id) {
+                                this.drivers[i] = updatedDriver
+                            }
+                        }
+                    }
+                }).catch(err => {
+
+                })
+        },
+
+        updateDrivers(updateFlag){
+            if(updateFlag){
+                this.getDrivers()
+            }
+        }
     }
 }
 </script>
 <style>
+.downloadButton {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 75;
+    margin: auto;
+
+}
+
+.deleteButton {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 75;
+    right: 0;
+    margin: auto;
+}
 </style>

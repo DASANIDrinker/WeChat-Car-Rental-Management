@@ -93,7 +93,7 @@ export default {
             }
             let result = false
             // return new Promise((resolve, reject) => {
-                await this.axios.post('http://localhost:8081/admin/check', form)
+                await this.axios.post('/api/admin/check', form)
                 // await this.axios.post('http://192.168.64.130:8081/admin/check', form)
                     .then(res => {
                         console.log(res.data)

@@ -309,7 +309,8 @@ export default {
       try {
         await this.axios({
           method: "GET",
-          url: "http://localhost:8081/vehicle/getAll",
+          // url: "http://localhost:8081/vehicle/getAll",
+          url: "/api/vehicle/getAll",
         }).then((res) => {
           console.log(res);
           this.vehiclesData = res.data;
@@ -319,7 +320,8 @@ export default {
         });
         await this.axios({
           method: "GET",
-          url: "http://localhost:8081/vehicle/getAllType",
+          // url: "http://localhost:8081/vehicle/getAllType",
+          url: "/api/vehicle/getAllType",
         }).then((res) => {
           this.vehicleTypeData = res.data;
         });
@@ -546,7 +548,8 @@ export default {
       this.createFormLoading = true;
       console.log(this.createForm);
       await this.axios({
-        url: "http://localhost:8081/vehicle/insert",
+        // url: "http://localhost:8081/vehicle/insert",
+        url: "/api/vehicle/insert",
         data: {
           plateNumber: JSON.stringify(this.createForm.plateNumber),
           etc: JSON.stringify(this.createForm.etc),
@@ -638,10 +641,22 @@ export default {
         occupied: this.editForm.occupied,
         vehicleId: this.currentId,
       });
+      // var stringifyData = {
+      //    etc: this.editForm.etc,
+      //    mount: this.editForm.mount,
+      //    recorder: this.editForm.recorder,
+      //    umbrella: this.editForm.umbrella,
+      //    occupied: this.editForm.occupied,
+      //    vehicleId: this.currentId,
+      // }
       console.log(stringifyData);
-      this.axios.put(
-        'http://localhost:8081/vehicle/update',
-        stringifyData
+      this.axios.post(
+        // 'http://localhost:8081/vehicle/update',
+        '/api/vehicle/update',
+        stringifyData,
+        // headers:{
+        //   'Content-Type':'application/x-www-form-urlencoded',
+        // },
         // {params: {}},
       )
         .then((res) => {
@@ -717,7 +732,8 @@ export default {
             // 如果没有多选的话 只删除选中的那一个
             if (this.multipleSelection.length == 0) {
               this.axios.delete(
-                'http://localhost:8081/vehicle/delete',
+                // 'http://localhost:8081/vehicle/delete',
+                '/api/vehicle/delete',
                 { data: vehicleID },
               ).then(res => {
                 console.log(res)
@@ -755,7 +771,8 @@ export default {
               }
               console.log(vehicleIds)
               this.axios.delete(
-                'http://localhost:8081/vehicle/delete',
+                // 'http://localhost:8081/vehicle/delete',
+                '/api/vehicle/delete',
                 { data: vehicleIds }
               ).then(res => {
                 console.log(res)

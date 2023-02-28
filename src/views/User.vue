@@ -148,7 +148,8 @@ export default {
     methods: {
         async getUsers() {
             try {
-                await this.axios.get('http://localhost:8081/user/getAll')
+                // await this.axios.get('http://localhost:8081/user/getAll')
+                await this.axios.get('/api/user/getAll')
                     .then(res => {
                         console.log(res)
                         this.users = res.data
@@ -220,7 +221,8 @@ export default {
             }
             form = this.$qs.stringify(form)
             this.editFormLoading = true
-            await this.axios.put('http://localhost:8081/user/updatePhone',
+            // await this.axios.put('http://localhost:8081/user/updatePhone',
+            await this.axios.post('/api/user/updatePhone',
                 form)
                 .then(res => {
                     console.log(res)
@@ -272,7 +274,8 @@ export default {
             this.currentExpandRow = [newAT]
             var accessToken = { accessToken: row.accessToken }
             accessToken = this.$qs.stringify(accessToken);
-            await this.axios.post('http://localhost:8081/driver/getDriversByAT',
+            // await this.axios.post('http://localhost:8081/driver/getDriversByAT',
+            await this.axios.post('/api/driver/getDriversByAT',
                 accessToken)
                 .then(res => {
                     console.log(res)

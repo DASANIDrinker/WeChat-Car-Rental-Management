@@ -48,14 +48,14 @@
                         </el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
-                <el-submenu index="6">
+                <!-- <el-submenu index="6">
                     <template slot="title" class="title"><i class="el-icon-s-tools"></i>证件管理</template>
                     <el-menu-item-group>
                         <el-menu-item index="6-1">
                             <router-link to="/identification">证件</router-link>
                         </el-menu-item>
                     </el-menu-item-group>
-                </el-submenu>
+                </el-submenu> -->
                 <el-submenu index="7">
                     <template slot="title" class="title"><i class="el-icon-s-tools"></i>地址管理</template>
                     <el-menu-item-group>
@@ -80,10 +80,18 @@
                         </el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
-                <el-submenu index="10" v-if="$store.state.user.user.name == 13901054449">
-                    <template slot="title" class="title"><i class="el-icon-s-tools"></i>管理员管理</template>
+                <el-submenu index="10">
+                    <template slot="title" class="title"><i class="el-icon-s-tools"></i>支付订单管理</template>
                     <el-menu-item-group>
                         <el-menu-item index="10-1">
+                            <router-link to="/paymentOrder">支付订单</router-link>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <el-submenu index="11" v-if="$store.state.user.user.name == 13901054449">
+                    <template slot="title" class="title"><i class="el-icon-s-tools"></i>管理员管理</template>
+                    <el-menu-item-group>
+                        <el-menu-item index="11-1">
                             <router-link to="/admin">管理员</router-link>
                         </el-menu-item>
                     </el-menu-item-group>

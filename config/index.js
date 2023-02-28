@@ -10,14 +10,15 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     // 线上配置
-    //assetsPublicPath: './',
+    // assetsPublicPath: './',
     // 线下配置
     assetsPublicPath: '/',
     proxyTable: {
       '/api': { //代理标识
-        target: 'http://192.168.64.130:8081',
+        // target: 'http://192.168.64.130:8081',
+        target: 'http://localhost:8081',
         changeOrigin: true, // 允许跨域
-        secure: false,
+        secure: false,// https必须添加 不验证证书
         pathRewrite: {
           '^/api': ''
         }
@@ -27,9 +28,12 @@ module.exports = {
     // Various Dev Server settings
     // 线上配置
     // host: '192.168.64.130', // can be overwritten by process.env.HOST
+
     // 线下配置
     host: 'localhost',
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    
+    
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -59,9 +63,9 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
     // 线上配置
-    assetsPublicPath: './',
+    // assetsPublicPath: './',
     // 线下配置
-    // assetsPublicPath:'/',
+    assetsPublicPath:'/',
 
     /**
      * Source Maps

@@ -24,6 +24,7 @@
         </el-table-column>
         <el-table-column prop="name" label="姓名" width="150" fixed="left">
         </el-table-column>
+        <el-table-column prop="id" label="身份证号" width="150" fixed="left"></el-table-column>
         <el-table-column prop="accessToken" label="用户登录凭证" width="150"></el-table-column>
         <el-table-column prop="paymentOrderInfo.outTradeNo" label="商户订单号" width="150"></el-table-column>
         <el-table-column prop="startDate" label="租车日期" width="150"></el-table-column>
@@ -146,8 +147,8 @@
           </el-form-item>
         </el-form>
         <div class="create-drawer-footer">
-          <el-button @click="cancelEditForm" style="width: 150px">取 消</el-button>
-          <el-button @click="confirmEditForm" type="primary" style="width: 150px">确定</el-button>
+          <el-button @click="cancelEditForm" style="width: 130px">取 消</el-button>
+          <el-button @click="confirmEditForm" type="primary" style="width: 130px">确定</el-button>
         </div>
       </div>
     </el-drawer>
@@ -490,7 +491,7 @@ export default {
       // await this.axios.post('/api/orders/updateOrder',
       //     form).
       this.axios
-        .put("/api/orders/update", form)
+        .post("/api/orders/update", form)
         .then((res) => {
           console.log(res);
           this.editFormLoading = false;

@@ -108,7 +108,8 @@
                     </el-form-item>
 
                 </el-form>
-                <div class="create-drawer-footer">
+                <!-- <div class="create-drawer-footer"> -->
+                    <div>
                     <el-button @click="cancelCreateForm" style="width: 150px">取 消</el-button>
                     <el-button @click="confirmCreateForm" type="primary" style="width: 150px">确定</el-button>
                 </div>
@@ -194,6 +195,40 @@
                     { text: '无', value: 'false' },
                 ]" :filter-method="filterTrueFalse" :formatter="formatter">
                 </el-table-column>
+
+
+                <el-table-column label="上传汽车类型图片" width="150">
+                    <template slot-scope="scope">
+
+                        
+                        <!-- <el-upload class="upload-demo" action="http://192.168.64.130:8081/image/uploadVehicles/" -->
+                        <el-upload class="upload-demo" action="http://localhost:8081/image/uploadVehicles/"
+                            :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList"
+                            list-type="picture" :limit="1" :data="currentType" :on-success="getVehicleType">
+                            <el-image style="width: 100px; height: 100px" :src="scope.row.imageUrl" lazy></el-image>
+                            <el-button size="small" type="primary"
+                                @click="clickUploadButton(scope.row)">点击上传</el-button>
+                            <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+                        </el-upload>
+
+                    </template>
+                </el-table-column>
+
+
+                <el-table-column label="下载/删除汽车类型图片" width="150">
+                    <template slot-scope="scope">
+                        <!-- <el-image style="width: 100px; height: 100px" :src="scope.row.imageUrl" lazy></el-image> -->
+                        <el-button size="small" type="primary" class="downloadButton" @click="clickDownloadButton(scope.row)">点击下载</el-button>
+                        <el-button size="small" type="danger" class="deleteButton" @click="clickDeleteButton(scope.row)">点击删除</el-button>
+                    </template>
+                </el-table-column>
+
+                <!-- <el-table-column label="删除汽车类型图片" width="150">
+                    <template slot-scope="scope">
+                        
+                    </template>
+                </el-table-column> -->
+
                 <!-- 编辑按钮和删除按钮列 -->
                 <el-table-column width="150" fixed="right" label="操作">
                     <template slot-scope="scope">
@@ -302,7 +337,8 @@
                     </el-form-item>
 
                 </el-form>
-                <div class="create-drawer-footer">
+                <!-- <div class="create-drawer-footer"> -->
+                    <div>
                     <el-button @click="cancelEditForm" style="width: 150px">取 消</el-button>
                     <el-button @click="confirmEditForm" type="primary" style="width: 150px">确定</el-button>
                 </div>
@@ -376,7 +412,9 @@ export default {
             },
 
             //当前选中的编辑行的vehicleTypeId
-            currentType: ""
+            currentType: "",
+            //存储上传图片的list
+            fileList: []
 
         }
     },
@@ -384,9 +422,10 @@ export default {
         // 获取车辆品种函数
         async getVehicleType() {
             try {
-                await this.axios.get('http://localhost:8081/vehicle/getAllType')
+                // await this.axios.get('http://localhost:8081/vehicle/getAllType')
+                await this.axios.get('/api/vehicle/getAllType')
                     .then(res => {
-                        console.log(res)
+                        // console.log(res)
                         this.vehicleTypes = res.data
                         for (var i = 0; i < this.vehicleTypes.length; i++) {
                             if (this.vehicleTypes[i].displacement == null) {
@@ -394,6 +433,11 @@ export default {
                             }
                         }
                         this.getFilterLists()
+                        for (var i = 0; i < this.vehicleTypes.length; i++) {
+                            this.vehicleTypes[i].imageUrl = "http://localhost:8081/img/carBlock/" + this.vehicleTypes[i].imageUrl + "/"
+                            // this.vehicleTypes[i].imageUrl = "http://192.168.64.130:8081/img/carBlock/" + this.vehicleTypes[i].imageUrl + "/"
+                        }
+                        console.log(this.vehicleTypes)
                     }).catch(err => {
                         console.log(err)
                     })
@@ -673,7 +717,8 @@ export default {
             // form = this.$qs.stringify(form);
             console.log(form)
             this.createFormLoading = true
-            await this.axios.post('http://localhost:8081/vehicle/insertType',
+            // await this.axios.post('http://localhost:8081/vehicle/insertType',
+            await this.axios.post('/api/vehicle/insertType',
                 {
                     brand: form.brand,
                     model: form.model,
@@ -783,73 +828,65 @@ export default {
             this.editForm.isSunroof = (e.isSunroof == true ? "有" : "无")
             this.editForm.isLeather = (e.isLeather == true ? "有" : "无")
             this.editForm.isCamera = (e.isCamera == true ? "有" : "无")
+            this.editForm.vehicleTypeId = this.currentType.vehicleTypeId
             console.log(e)
         },
 
-        async confirmEditForm() {
+        confirmEditForm() {
 
             var form = this.editForm
             console.log(form)
-            this.editFormLoading = true
-            await this.axios.put('http://localhost:8081/vehicle/updateType',
-                {
+            form.isAuto = (form.isAuto == "自动挡" ? true : false)
+            form.isFull = (form.isFull == "已租满" ? true : false)
+            form.isSunroof = (form.isSunroof == "有" ? true : false)
+            form.isLeather = (form.isLeather == "有" ? true : false)
+            form.isCamera = (form.isCamera == "有" ? true : false)
 
-                    brand: form.brand,
-                    model: form.model,
-                    displacement: form.displacement,
-                    isAuto: form.isAuto,
-                    feePerDay: form.feePerDay,
-                    boxes: form.boxes,
-                    seats: form.seats,
-                    style: form.style,
-                    isFull: form.isFull,
-                    nation: form.nation,
-                    isCamera: form.isCamera,
-                    isSunroof: form.isSunroof,
-                    isLeather: form.isLeather,
-                    power: form.power,
-                    vehicleTypeId: this.currentType.vehicleTypeId
-                }).then(res => {
-                    console.log(res)
-                    if (res.data == "success") {
-                        for (var i = 0; i < this.vehicleTypes.length; i++) {
-                            if (this.vehicleTypes[i].vehicleTypeId == this.currentType.vehicleTypeId) {
-                                this.vehicleTypes[i].brand = form.brand
-                                this.vehicleTypes[i].model = form.model
-                                this.vehicleTypes[i].displacement = form.displacement
-                                this.vehicleTypes[i].isAuto = form.isAuto
-                                this.vehicleTypes[i].feePerDay = form.feePerDay
-                                this.vehicleTypes[i].boxes = form.boxes
-                                this.vehicleTypes[i].seats = form.seats
-                                this.vehicleTypes[i].style = form.style
-                                this.vehicleTypes[i].isFull = form.isFull
-                                this.vehicleTypes[i].nation = form.nation
-                                this.vehicleTypes[i].isCamera = form.isCamera
-                                this.vehicleTypes[i].isLeather = form.isLeather
-                                this.vehicleTypes[i].isSunroof = form.isSunroof
-                                this.vehicleTypes[i].power = form.power
-                            }
+            console.log(form)
+            this.editFormLoading = true
+            // await this.axios.put('http://localhost:8081/vehicle/updateType',
+            this.axios.put('/api/vehicle/updateType', form
+            ).then(res => {
+                console.log(res)
+                if (res.data == "success") {
+                    for (var i = 0; i < this.vehicleTypes.length; i++) {
+                        if (this.vehicleTypes[i].vehicleTypeId == this.currentType.vehicleTypeId) {
+                            this.vehicleTypes[i].brand = form.brand
+                            this.vehicleTypes[i].model = form.model
+                            this.vehicleTypes[i].displacement = form.displacement
+                            this.vehicleTypes[i].isAuto = form.isAuto
+                            this.vehicleTypes[i].feePerDay = form.feePerDay
+                            this.vehicleTypes[i].boxes = form.boxes
+                            this.vehicleTypes[i].seats = form.seats
+                            this.vehicleTypes[i].style = form.style
+                            this.vehicleTypes[i].isFull = form.isFull
+                            this.vehicleTypes[i].nation = form.nation
+                            this.vehicleTypes[i].isCamera = form.isCamera
+                            this.vehicleTypes[i].isLeather = form.isLeather
+                            this.vehicleTypes[i].isSunroof = form.isSunroof
+                            this.vehicleTypes[i].power = form.power
                         }
-                        // this.clearEditForm()
-                        this.$message({
-                            message: "车辆品类修改成功",
-                            type: "success",
-                        });
-                        this.showEditDrawer = false
-                        this.editFormLoading = false
-                    } else {
-                        this.$message.error("车辆修改失败");
-                        // this.clearEditForm()
-                        this.showEditDrawer = false
-                        this.editFormLoading = false
                     }
-                }).catch(err => {
-                    console.log(err)
+                    // this.clearEditForm()
+                    this.$message({
+                        message: "车辆品类修改成功",
+                        type: "success",
+                    });
+                    this.showEditDrawer = false
+                    this.editFormLoading = false
+                } else {
                     this.$message.error("车辆修改失败");
                     // this.clearEditForm()
                     this.showEditDrawer = false
                     this.editFormLoading = false
-                })
+                }
+            }).catch(err => {
+                console.log(err)
+                this.$message.error("车辆修改失败");
+                // this.clearEditForm()
+                this.showEditDrawer = false
+                this.editFormLoading = false
+            })
 
         },
 
@@ -890,7 +927,8 @@ export default {
                     if (action === 'confirm') {
                         instance.confirmButtonLoading = true;
                         if (this.multipleSelection.length == 0) {
-                            this.axios.delete('http://localhost:8081/vehicle/deleteType',
+                            // this.axios.delete('http://localhost:8081/vehicle/deleteType',
+                            this.axios.delete('/api/vehicle/deleteType',
                                 { data: vehicleType })
                                 .then(res => {
                                     console.log(res)
@@ -922,7 +960,8 @@ export default {
                                 vehicleTypes.push(this.multipleSelection[i].vehicleTypeId)
                             }
                             console.log(vehicleTypes)
-                            this.axios.delete('http://localhost:8081/vehicle/deleteType',
+                            // this.axios.delete('http://localhost:8081/vehicle/deleteType',
+                            this.axios.delete('/api/vehicle/deleteType',
                                 { data: vehicleTypes }).then(res => {
                                     if (res.data == "success") {
                                         var tempTypes = JSON.parse(JSON.stringify(this.vehicleTypes))
@@ -958,8 +997,180 @@ export default {
                     }
                 }
             })
-        }
-    }
+        },
+
+
+        //上传按钮 函数
+        handleRemove(file, fileList) {
+            console.log(file, fileList);
+        },
+
+        handlePreview(file) {
+            console.log(file);
+        },
+        handleExceed(files, fileList) {
+            this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+        },
+        beforeRemove(file, fileList) {
+            return this.$confirm(`确定移除 ${file.name}？`);
+        },
+
+        //点击汽车类型上传函数
+        clickUploadButton(e) {
+            console.log(e)
+            this.currentType = e
+            console.log(this.currentType)
+        },
+
+        //点击汽车类型下载函数
+        clickDownloadButton(e) {
+            console.log(e)
+            this.currentType = e
+            // try {
+            //     await this.axios.get(this.currentType.imgUrl.toString())
+            //     .then(res=>{
+            //         console.log(res)
+            //     }).catch(err=>{
+
+            //     })
+            // } catch (err) {
+
+            // }
+            var url = e.imageUrl
+            var name = this.currentType.brand + this.currentType.model
+            console.log(url)
+            console.log(name)
+            this.downloadByBlob(url, name)
+        },
+
+        //以下的downloadImage downloadQr 和downloadByBlob都是下载图片的函数
+        // 判断是否为图片
+        testImg(img) {
+            return /\.(png|jpg|gif|jpeg|webp)$/.test(img);
+        },
+
+
+        downloadQr(imgUrl, name) {
+            if (this.testImg(imgUrl)) {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                const img = new Image();
+                img.src = imgUrl;
+                img.crossOrigin = "*";
+                img.onload = () => {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0, img.width, img.height);
+                    let url = canvas.toDataURL();
+                    let alink = document.createElement("a");
+                    alink.style = "display: none;";
+                    document.documentElement.appendChild(alink);
+                    alink.setAttribute("download", name);
+                    alink.setAttribute("href", url);
+                    alink.click();
+                    document.documentElement.removeChild(alink);
+                };
+            } else {
+                window.open(imgUrl);//pdf下载
+            }
+        },
+
+
+        downloadImage: (imgsrc, name) => {
+            var image = new Image()
+            // image.setAttribute('crossOrigin', '*')
+            image.crossOrigin = "*";
+            image.src = imgsrc
+            image.onload = function () {
+                var canvas = document.createElement('canvas')
+                canvas.width = image.width
+                canvas.height = image.height
+                var context = canvas.getContext('2d')
+                context.drawImage(image, 0, 0, image.width, image.height)
+                var url = canvas.toDataURL('image/png') // 得到图片的base64编码数据
+
+                var a = document.createElement('a') // 生成一个a元素
+                var event = new MouseEvent('click') // 创建一个单击事件
+                a.download = name || 'photo' // 设置图片名称
+                a.href = url // 将生成的URL设置为a.href属性
+                a.dispatchEvent(event) // 触发a的单击事件
+            }
+
+        },
+
+
+        downloadByBlob(url, name) {
+            let image = new Image()
+            image.setAttribute('crossOrigin', '*')
+            // image.crossOrigin = "*";
+            image.src = url
+            image.onload = () => {
+                let canvas = document.createElement('canvas')
+                canvas.width = image.width
+                canvas.height = image.height
+                let ctx = canvas.getContext('2d')
+                ctx.drawImage(image, 0, 0, image.width, image.height)
+                canvas.toBlob((blob) => {
+                    let url = URL.createObjectURL(blob)
+                    this.download(url, name)
+                    // 用完释放URL对象
+                    URL.revokeObjectURL(url)
+                })
+
+            }
+
+        },
+
+        download(href, name) {
+            let eleLink = document.createElement('a')
+            eleLink.download = name
+            eleLink.href = href
+            eleLink.click()
+            eleLink.remove()
+
+        },
+
+        //点击删除按钮函数
+        clickDeleteButton(e) {
+            this.currentType = e
+            console.log(this.currentType.vehicleTypeId)
+            console.log(this.currentType.imageName)
+            this.deleteVehicleImage(this.currentType.vehicleTypeId, this.currentType.imageName)
+        },
+
+        //删除图片
+        async deleteVehicleImage(vehicleTypeId, imageName) {
+            await this.$confirm('是否要删除该图片?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.axios.get('/api/image/deleteVehicleTypeImage',
+                    {params:{ vehicleTypeId: vehicleTypeId, imageName: imageName }})
+                    .then(res => {
+                        if (res.status === 200) {
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功'
+                            })
+                            // this.getProductImage()
+                        }
+                    }).catch(res => {
+
+                    })
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                })
+            })
+        },
+
+
+    },
+
+
+
 };
 </script>
 <style>
@@ -968,5 +1179,23 @@ export default {
     margin-bottom: 30px;
     widows: 80%;
     margin-left: 60px;
+}
+.downloadButton {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 75;
+    margin: auto;
+
+}
+
+.deleteButton {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 75;
+    right: 0;
+    margin: auto;
 }
 </style>

@@ -130,7 +130,8 @@ export default {
     },
     methods: {
         async getAdmins() {
-            await this.axios.get('http://localhost:8081/admin/getAll')
+            // await this.axios.get('http://localhost:8081/admin/getAll')
+            await this.axios.get('/api/admin/getAll')
                 .then(res => {
                     this.admins = res.data
                     console.log(this.admins)
@@ -177,7 +178,8 @@ export default {
 
         async confirmCreateForm() {
             this.createFormLoading = true
-            await this.axios.post('http://localhost:8081/admin/createAdmin',
+            // await this.axios.post('http://localhost:8081/admin/createAdmin',
+            await this.axios.post('/api/admin/createAdmin',
                 this.createForm).then(res => {
                     console.log(res)
                     this.createFormLoading = false
@@ -239,7 +241,8 @@ export default {
 
         async confirmEditForm() {
             this.editFormLoading = true
-            await this.axios.put('http://localhost:8081/admin/update',
+            // await this.axios.put('http://localhost:8081/admin/update',
+            await this.axios.put('/api/admin/update',
                 this.editForm).then(res => {
                     console.log(res)
                     this.editFormLoading = false
@@ -295,7 +298,8 @@ export default {
                     if (action === 'confirm') {
                         instance.confirmButtonLoading = true
                         if (this.multipleSelection.length == 0) {
-                            this.axios.delete('http://localhost:8081/admin/delete',
+                            // this.axios.delete('http://localhost:8081/admin/delete',
+                            this.axios.delete('/api/admin/delete',
                                 { data: adminId }).then(res => {
                                     console.log(res)
                                     if (res.data == "success") {
@@ -325,7 +329,8 @@ export default {
                                 ids.push(this.multipleSelection[i].adminId)
                             }
                             console.log(ids)
-                            this.axios.delete('http://localhost:8081/admin/delete',
+                            // this.axios.delete('http://localhost:8081/admin/delete',
+                            this.axios.delete('/api/admin/delete',
                                 { data: ids }).then(res => {
                                     console.log(res)
                                     if (res.data == "success") {
